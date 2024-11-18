@@ -13,28 +13,28 @@ public class PasswordStrengthMeter {
 			return PasswordStrength.INVALID;
 		}
 
-		boolean lengthEnough = password.length() >= 8;
-		boolean containsNumber = meetsContainingNumberCriteria(password);
-		boolean containsUpperCase = meetsContainingUpperCaseCriteria(password);
-
-		if (lengthEnough && !containsNumber && !containsUpperCase) {
+		int meterCount = getMeterCriteriaCounts(password);
+		if (meterCount <= 1) {
 			return PasswordStrength.WEAK;
 		}
-		if (!lengthEnough && containsNumber && !containsUpperCase) {
-			return PasswordStrength.WEAK;
+		if (meterCount == 2) {
+			return PasswordStrength.NORMAL;
 		}
-		if (!lengthEnough && !containsNumber && containsUpperCase) {
-			return PasswordStrength.WEAK;
-		}
-		
-		if (!lengthEnough)
-			return PasswordStrength.NORMAL;
-		if (!containsNumber)
-			return PasswordStrength.NORMAL;
-		if (!containsUpperCase)
-			return PasswordStrength.NORMAL;
-
 		return PasswordStrength.STRONG;
+	}
+
+	private int getMeterCriteriaCounts(String password) {
+		int meterCount = 0;
+		if (password.length() >= 8) {
+			meterCount++;
+		}
+		if (meetsContainingNumberCriteria(password)) {
+			meterCount++;
+		}
+		if (meetsContainingUpperCaseCriteria(password)) {
+			meterCount++;
+		}
+		return meterCount;
 	}
 
 	private boolean meetsContainingUpperCaseCriteria(String password) {
