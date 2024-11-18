@@ -13,23 +13,26 @@ import org.junit.jupiter.api.Test;
 
 class PasswordStrengthMeterTest {
 
+	private PasswordStrengthMeter meter = new PasswordStrengthMeter();
+
 	@Test
 	void meetsAllCriteria_Then_Strong() {
-		PasswordStrengthMeter meter = new PasswordStrengthMeter();
-		assertEquals(PasswordStrength.STRONG, meter.meter("ab12!@AB"));
-		assertEquals(PasswordStrength.STRONG, meter.meter("abc1!Add"));
+		assertStrength("ab12!@AB", PasswordStrength.STRONG);
+		assertStrength("abc1!Add", PasswordStrength.STRONG);
 	}
 
 	@Test
 	void meetsOtherCriteria_except_for_Length_Then_Normal() {
-		PasswordStrengthMeter meter = new PasswordStrengthMeter();
-		assertEquals(PasswordStrength.NORMAL, meter.meter("ab12!@A"));
-		assertEquals(PasswordStrength.NORMAL, meter.meter("Ab12!c"));
+		assertStrength("ab12!@A", PasswordStrength.NORMAL);
+		assertStrength("Ab12!c", PasswordStrength.NORMAL);
 	}
 
 	@Test
 	void meetsOtherCriteria_except_for_number_Then_Normal() {
-		PasswordStrengthMeter meter = new PasswordStrengthMeter();
-		assertEquals(PasswordStrength.NORMAL, meter.meter("ab!@ABqwer"));
+		assertStrength("ab!@ABqwer", PasswordStrength.NORMAL);
+	}
+
+	private void assertStrength(String password, PasswordStrength expectedStrength) {
+		assertEquals(expectedStrength, meter.meter(password));
 	}
 }
