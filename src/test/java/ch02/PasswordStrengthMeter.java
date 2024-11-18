@@ -1,7 +1,5 @@
 package ch02;
 
-import java.util.Objects;
-
 /**
  * 아래의 조건 중 3개가 일치하면 강함, 2개가 일치하면 보통, 1개이하가 일치하면 약함
  * - 길이가 8글자 이상
@@ -11,18 +9,36 @@ import java.util.Objects;
 public class PasswordStrengthMeter {
 
 	public PasswordStrength meter(String password) {
-		Objects.requireNonNull(password);
-
-		if (password.length() < 8) {
-			return PasswordStrength.NORMAL;
+		if (password == null || password.isEmpty()) {
+			return PasswordStrength.INVALID;
 		}
 
+		boolean lengthEnough = password.length() >= 8;
 		boolean containsNumber = meetsContainingNumberCriteria(password);
-		if (!containsNumber) {
-			return PasswordStrength.NORMAL;
+		boolean containsUpperCase = meetsContainingUpperCaseCriteria(password);
+
+		if (lengthEnough && !containsNumber && !containsUpperCase) {
+			return PasswordStrength.WEAK;
 		}
+		if (!lengthEnough && containsNumber && !containsUpperCase) {
+			return PasswordStrength.WEAK;
+		}
+		if (!lengthEnough && !containsNumber && containsUpperCase) {
+			return PasswordStrength.WEAK;
+		}
+		
+		if (!lengthEnough)
+			return PasswordStrength.NORMAL;
+		if (!containsNumber)
+			return PasswordStrength.NORMAL;
+		if (!containsUpperCase)
+			return PasswordStrength.NORMAL;
 
 		return PasswordStrength.STRONG;
+	}
+
+	private boolean meetsContainingUpperCaseCriteria(String password) {
+		return password.chars().anyMatch(Character::isUpperCase);
 	}
 
 	private static boolean meetsContainingNumberCriteria(String password) {
